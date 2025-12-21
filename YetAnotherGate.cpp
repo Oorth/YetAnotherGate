@@ -860,11 +860,11 @@ void InitUnicodeString(UNICODE_STRING& u, const wchar_t* s)
     u.Buffer        = const_cast<wchar_t*>(s);
 }
 
-int main_entry(Sys_stb recieved_syscallEntries[], size_t numSyscalls)
+bool InitSyscallGate(Sys_stb recieved_syscallEntries[], size_t numSyscalls)
 {
 
-    if(!GetHookedFunctions()) return 1;
-    if(!GetUnhookedDlls_KnownDlls()) return 1;
+    if(!GetHookedFunctions()) return false;
+    if(!GetUnhookedDlls_KnownDlls()) return false;
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -906,7 +906,7 @@ int main_entry(Sys_stb recieved_syscallEntries[], size_t numSyscalls)
     #if DEBUG_FILE
         details::close_log_file();
     #endif
-    return 0;
+    return true;
 }
 
 void* FindExportAddress(HMODULE hModule, const char* funcName)

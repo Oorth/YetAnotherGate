@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEBUG 1
+#define DEBUG 0
 #define DEBUG_FILE 0
 #define DEBUG_VECTOR 0
 
@@ -12,12 +12,14 @@
 struct Sys_stb
 {
     const char* function_name;
+
+    // Do not touch
     DWORD SSN;
     size_t stubsize;
     void* pStubAddress;
     BYTE* pCleanSyscall;
 };
 
-int main_entry(Sys_stb recieved_syscallEntries[], size_t numSyscalls);
+bool InitSyscallGate(Sys_stb recieved_syscallEntries[], size_t numSyscalls);
 
 void* SysFunction(const char* function_name, ...);

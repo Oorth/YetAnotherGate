@@ -4,7 +4,7 @@
 #include <windows.h>
 #include <winternl.h>
 
-int setup_syscall_engine()
+bool setup_syscall_engine()
 {
 
     Sys_stb syscallEntries[MAX_SYSCALLS];
@@ -13,21 +13,24 @@ int setup_syscall_engine()
     syscallEntries[numSyscalls++] = {"NtWriteFile", 0, 0, nullptr, nullptr};
     syscallEntries[numSyscalls++] = {"NtCreateFile", 0, 0, nullptr, nullptr};
 
-    main_entry(syscallEntries, numSyscalls);
+    if(!InitSyscallGate(syscallEntries, numSyscalls))
+    {
+        fuk("Syscall Engine error");
+        return false;
+    }
 
-
-    return 0;
+    return true;
 }
 
 int main()
 {
 
-    setup_syscall_engine();
+    if(!setup_syscall_engine()) { fuk("Something broke while setting up syscall engine"); return 1; }
 
-    norm(YELLOW"==============================================\n");
+    norm(YELLOW"\n==============================================\n");
 
     IO_STATUS_BLOCK ioStatusBlock = {};
-    char buffer[] = "!!!!Hello from NtWriteFile syscall!!!\n";
+    char buffer[] = "!!!! Hello world :) !!!\n";
     ULONG length = sizeof(buffer) - 1;
 
 
