@@ -15,6 +15,8 @@
 
 </pre>
 
+**Read the full technical deep dive on how this polymorphism engine works:** [Polymorphic Syscall Engine](https://arth.imbeddex.com/malware/development/Polymorphic%20Syscall%20Engine)
+
 ## Overview
 
 Hi, this project aims on bypassing every usermode AV/EDR via using syscall trampolines and generating dynamically obsfuscated syscall stubs....
