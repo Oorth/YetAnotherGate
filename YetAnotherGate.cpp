@@ -176,15 +176,6 @@ typedef struct _MY_LDR_DATA_TABLE_ENTRY
     UCHAR SigningLevel;                                                     //0x11c
 } MY_LDR_DATA_TABLE_ENTRY, *MY_PLDR_DATA_TABLE_ENTRY; 
 
-struct Sys_stb
-{
-    const char* function_name;
-    DWORD SSN;
-    size_t stubsize;
-    void* pStubAddress;
-    BYTE* pCleanSyscall;
-}syscallEntries[MAX_SYSCALLS];
-
 struct _LIBS
 {
     HMODULE hHookedNtdll;
@@ -208,6 +199,7 @@ typedef struct _MY_FUNCTIONS
 }_MY_FUNCTIONS;
 _MY_FUNCTIONS fn;
 
+Sys_stb syscallEntries[MAX_SYSCALLS];
 BYTE* pSyscallPool = nullptr;
 size_t stubCount = 0, stubOffset = 0;
 HMODULE hHookedNtdll = nullptr;
@@ -806,6 +798,9 @@ void* AddStubToPool(Sys_stb* sEntry, size_t NumberOfElements)
         sEntry[j].pStubAddress = stubAddress;
         stubOffset += sEntry->stubsize;
 
+        syscallEntries[stubCount].function_name = sEntry[j].function_name;
+        syscallEntries[stubCount].pStubAddress = stubAddress;
+
         ++stubCount;
     }
 
@@ -827,6 +822,7 @@ void* SysFunction(const char* function_name, ...)
 
     for(int i = 0; i < stubCount; ++i)
     {
+        if(syscallEntries[i].function_name == nullptr) continue;
         if(strcmp(syscallEntries[i].function_name, function_name) == 0)
         {
             pExecMem = syscallEntries[i].pStubAddress;
@@ -886,7 +882,9 @@ int main_()
 {
     //srand(static_cast<unsigned>(time(nullptr)));
     
-    const char* function_name;
+    //const char* function_name;
+    //UNREFERENCED_PARAMETER(function_name);
+
     DWORD dSSN = 0;
     IO_STATUS_BLOCK ioStatusBlock = {};
 
